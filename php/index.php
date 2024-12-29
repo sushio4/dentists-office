@@ -25,6 +25,15 @@
         </form>
         <?php
         if($_SERVER["REQUEST_METHOD"] == "POST") {
+            if(empty(trim($_POST["username"]))) {
+                echo "Username cannot be empty!";
+                return;
+            }
+            if(empty(trim($_POST["password"]))) {
+                echo "Password cannot be empty!";
+                return;
+            }
+        
             echo "Logged in as: {$_POST["username"]}";
         }
         ?>
