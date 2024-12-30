@@ -19,6 +19,7 @@
             margin-inline: auto;
         }
     </style>
+    <title>Logowanie</title>
 </head>
 <body>
     <div id="login_header">
@@ -31,6 +32,10 @@
             Hasło:<br>
             <input type="password" name="password" id="password"><br><br>
             <input type="submit" value="Zaloguj"><br>
+        </form>
+        <h3>Nie pamiętasz hasła?</h3>
+        <form action="forgor.php">
+            <input type="submit" value="Nie pamiętam hasła">
         </form>
     </div>
     <br>
