@@ -120,6 +120,11 @@
                     return;
                 }
             }
+            else {
+                echo "Please contact tech support, error code: ID10-T";
+                $stmt->close();
+                return;
+            }
 
             // insert data to db
             $sql = "INSERT INTO Patients (FirstName, LastName, DateOfBirth, Phone, Email, Address, Pass) VALUES (?, ?, ?, ?, ?, ?, ?)";
@@ -142,7 +147,7 @@
                 $_SESSION["id"] = $user_id;
                 $_SESSION["loggedin"] = true;
 
-                header("location: booking.php");
+                header("location: welcome.php");
                 exit;
             }
             else {

@@ -4,7 +4,7 @@
     session_start();
 
     if(isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true) {
-        header("location: booking.php");
+        header("location: welcome.php");
         exit;
     }
 ?>
@@ -114,7 +114,7 @@
                     $_SESSION["name"] = $name;
                     $_SESSION["id"] = $user_id;
 
-                    header("location: booking.php");
+                    header("location: welcome.php");
                     return;
                 }
                 else {
