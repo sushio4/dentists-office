@@ -1,10 +1,28 @@
 <!DOCTYPE html>
 <html>
+<?php
+	session_start();
+
+	if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
+		header("location: index.php");
+		exit;
+	}
+?>
 <head>
 	<title>Rezerwacja wizyty</title>
 	<style>
 		body {
 			background-color: #e0f0ff;
+		}
+		header {
+			background-color: #b0d0ff;
+			display: flex;
+			justify-content: space-around;
+			align-items: center;
+			height: 10vh;
+		}
+		#logout_button {
+
 		}
 		table {
 			border-collapse: collapse
@@ -29,6 +47,24 @@
 	<meta charset="utf-8">
 </head>
 <body>
+	<header>
+		<div id="profile">
+			<form action="profile.php">
+				<input type="submit" value="Mój profil" id="profile_button">
+			</form>
+		</div>
+		
+		<h2>Witaj ponownie, <?php
+			//fajne rzeczy można tym pehapem robić 
+			echo $_SESSION["name"]
+		?>!</h2>
+
+		<div id=logout>
+			<form action="logout.php">
+				<input type="submit" value="Wyloguj" id="logout_button">
+			</form>
+		</div>
+	</header>
 	<div id="content">
 		<div id="table_header">
 		<h2>Dostępne godziny</h2>
@@ -71,15 +107,15 @@
         </tr>
 		<tr>
         <td>
-        <input type="radio" id="h10" name="time" value="10>
+        <input type="radio" id="h10" name="time" value="10">
 			<label for="h10">10:00</label>
 		</td>
 		<td>
-        <input type="radio" id="h10" name="time" value="10>
+        <input type="radio" id="h10" name="time" value="10">
 			<label for="h10">10:00</label>
 		</td>
 		<td>
-        <input type="radio" id="h10" name="time" value="10 disabled="true">
+        <input type="radio" id="h10" name="time" value="10" disabled="true">
 			<label for="h10">10:00</label>
 		</td>
         </tr>

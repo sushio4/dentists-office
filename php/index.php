@@ -1,4 +1,13 @@
 <!DOCTYPE html>
+<html>
+<?php
+    session_start();
+
+    if(isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true) {
+        header("location: booking.php");
+        exit;
+    }
+?>
 <head>
     <meta charset="utf=8">
     <style>
@@ -52,7 +61,7 @@
                 return;
             }
 
-            $sql = "SELECT PatientID, Pass FROM Patients WHERE Email = ?";
+            $sql = "SELECT PatientID, FirstName, Pass FROM Patients WHERE Email = ?";
             $stmt = $db->prepare($sql);
 
             if(!$stmt) {
@@ -74,6 +83,7 @@
 
                 $user_id = 0;
                 $hashed_pass = "";
+                $name = "";
 
                 if($stmt->num_rows != 1) {
                     echo "Użytkownik nie istnieje. Proszę się zarejestrować";
@@ -82,7 +92,7 @@
                 }
                 
                 //yup, that's how we get the results
-                $stmt->bind_result($user_id, $hashed_pass);
+                $stmt->bind_result($user_id, $name, $hashed_pass);
 
                 if(!$stmt->fetch()) {
                     echo "Please contact tech support, error code: ID10-T";
@@ -95,6 +105,11 @@
 
                 if(password_verify($password, $hashed_pass)) {
                     echo "Zalogowano";
+                    $_SESSION["loggedin"] = true;
+                    $_SESSION["name"] = $name;
+                    $_SESSION["id"] = $user_id;
+
+                    header("location: booking.php");
                     return;
                 }
                 else {
@@ -106,3 +121,4 @@
         ?>
     </div>
 </body>
+</html>

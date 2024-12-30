@@ -134,6 +134,16 @@
 
             if($stmt->execute()) {
                 echo "Pomyślnie zarejestrowano!";
+                $user_id = $db->insert_id;
+
+                session_start();
+
+                $_SESSION["name"] = $name;
+                $_SESSION["id"] = $user_id;
+                $_SESSION["loggedin"] = true;
+
+                header("location: booking.php");
+                exit;
             }
             else {
                 echo "Coś poszło nie tak :c";
