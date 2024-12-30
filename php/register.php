@@ -5,7 +5,7 @@
 		body {
 			background-color: #e0f0ff;
 		}
-        #register_header, #register_form{
+        #register_header, #register_form, #login, #feedback{
             max-width: fit-content;
             margin-inline: auto;
         }
@@ -35,53 +35,110 @@
             <input type="password" name="confirm_password" id="confirm_password"><br><br>
             <input type="submit" value="Zarejestruj"><br>
         </form>
+    </div>
+    <div id="login">
+        <h3>Masz już konto?</h3>
+        <form action="/index.php">
+            <input type="submit" value="Zaloguj się">
+        </form>
+    </div>
+    <br>
+    <div id="feedback">
         <?php
 
         require_once "config.php";
 
         if($_SERVER["REQUEST_METHOD"] == "POST") {
 
+            // yup, this is regex. fuck me
             $email_pattern = "/^.+@.+\..{1,3}$/i";
             $phone_pattern = "/^(\+\d\d)?\d{9}$/";
-            $phone_nr = str_replace(" ", "", $_POST["phone"]);
 
+            // just an indicator whether something went wrong
+            // it's there so you can print multiple error messages before returning
             $ret = false;
 
-            if(!preg_match($email_pattern, trim($_POST["email"]))) {
+            $email = trim($_POST["email"]);
+            $name = trim($_POST["name"]);
+            $last_name = trim($_POST["last_name"]);
+            $date_of_birth = trim($_POST["date_of_birth"]);
+            $address = trim($_POST["address"]);
+            $phone_nr = str_replace(" ", "", $_POST["phone"]);
+            $password = trim($_POST["password"]);
+            $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+
+            if(!preg_match($email_pattern, $email)) {
                 echo "Nieprawidłowy email<br>";
                 $ret = true;
             }
-            if(empty(trim($_POST["name"]))) {
+            if(empty($name)) {
                 echo "Imię nie może być puste<br>";
                 $ret = true;
             }
-            if(empty(trim($_POST["last_name"]))) {
+            if(empty($last_name)) {
                 echo "Nazwisko nie może być puste<br>";
                 $ret = true;
             }
-            if(empty(trim($_POST["date_of_birth"]))) {
+            if(empty($date_of_birth)) {
                 echo "Data urodzenia nie może być pusta<br>";
                 $ret = true;
             }
-            if(empty(trim($_POST["address"]))) {
+            if(empty($address)) {
                 echo "Adres nie może być pusty<br>";
                 $ret = true;
             }
-            if(!preg_match($phone_pattern, trim($phone_nr))) {
+            if(!preg_match($phone_pattern, $phone_nr)) {
                 echo "Nieprawidłowy numer telefonu<br>";
                 $ret = true;
             }
-            if(empty(trim($_POST["password"]))) {
+            if(empty($password)) {
                 echo "Hasło nie może być puste<br>";
                 $ret = true;
             }
-            if(trim($_POST["password"]) != trim($_POST["confirm_password"])) {
+            if($password != trim($_POST["confirm_password"])) {
                 echo "Hasła się nie zgadzają<br>";
                 $ret = true;
             }
             if($ret) return;
-        
-            echo "Zarejestrowano!";
+
+            // check if user exists
+            $sql = "SELECT * FROM Patients WHERE Email = ?";
+            $stmt = $db->prepare($sql);
+
+            if(!$stmt) {
+                echo "Please contact tech support, error code: ID10-T";
+                return;
+            }
+
+            $stmt->bind_param("s", $email);
+
+            if($stmt->execute()) {
+                $stmt->store_result();
+                
+                if($stmt->num_rows > 0) {
+                    echo "Użytkownik o takim adresie email już istnieje. Proszę się zalogować"; 
+                    return;
+                }
+            }
+
+            // insert data to db
+            $sql = "INSERT INTO Patients (FirstName, LastName, DateOfBirth, Phone, Email, Address, Pass) VALUES (?, ?, ?, ?, ?, ?, ?)";
+            $stmt->prepare($sql);
+
+            if(!$stmt) {
+                echo "Please contact tech support, error code: ID10-T";
+                return;
+            }
+
+            $stmt->bind_param("sssssss", $name, $last_name, $date_of_birth, $phone_nr, $email, $address, $hashed_password);
+
+            if($stmt->execute()) {
+                echo "Pomyślnie zarejestrowano!";
+            }
+            else {
+                echo "Coś poszło nie tak :c";
+            }
+            $stmt->close();
         }
         ?>
     </div>

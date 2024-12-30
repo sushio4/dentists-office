@@ -1,17 +1,17 @@
 CREATE TABLE IF NOT EXISTS Patients (
-	PatientID INT,
+	PatientID INT NOT NULL AUTO_INCREMENT,
 	FirstName VARCHAR(50),
 	LastName VARCHAR(50),
 	DateOfBirth DATE,
 	Phone VARCHAR(15),
 	Email VARCHAR(100) UNIQUE,
 	Address TEXT,
-	Pass VARCHAR(50),
+	Pass VARCHAR(255),
 	PRIMARY KEY (PatientID)
 );
 
 CREATE TABLE IF NOT EXISTS Staff (
-	StaffID INT,
+	StaffID INT NOT NULL AUTO_INCREMENT,
 	FirstName VARCHAR(50),
 	LastName VARCHAR(50),
 	Phone VARCHAR(15),
@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS Staff (
 );
 
 CREATE TABLE IF NOT EXISTS Services (
-	ServiceID INT,
+	ServiceID INT NOT NULL AUTO_INCREMENT,
 	ServiceName VARCHAR(100),
 	Description TEXT,
 	DurationHours INT,
@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS Services (
 );
 
 CREATE TABLE IF NOT EXISTS Appointments (
-	AppointmentID INT,
+	AppointmentID INT NOT NULL AUTO_INCREMENT,
 	PatientID INT,
 	StaffID INT,
 	ServiceID INT,
