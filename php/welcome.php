@@ -109,12 +109,15 @@
                     while($row = $res->fetch_assoc()) {
                         $date = substr($row["AppointmentDate"], 0, 10);
 
+                        // God forgive me for what I've done
+                        // In my defense, dates and times are a bitch
                         $time_begin = date("H:i", strtotime(substr($row["AppointmentDate"], 11)));
 
                         $duration_mins = $row["DurationHalfHours"] * 30;
                         $time_end = date("H:i", strtotime($time_begin . "+{$duration_mins} minutes"));
                         $time = "{$time_begin} - {$time_end}";
 
+                        // Oh and . concatenates strings so .= appends to a string
                         $table .= "<tr><td>{$row["ServiceName"]}</td><td>{$date}</td><td>{$time}</td>" . 
                                     "<td>{$row["FirstName"]} {$row["LastName"]}</td><td>{$row["Price"]}</td></tr>";
                     }
