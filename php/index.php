@@ -5,10 +5,10 @@
 		body {
 			background-color: #e0f0ff;
 		}
-        #login_header, #login_form {
+        #login_header, #login_form, #register {
             max-width: fit-content;
             margin-inline: auto;
-        }     
+        }
     </style>
 </head>
 <body>
@@ -37,5 +37,12 @@
             echo "Logged in as: {$_POST["username"]}";
         }
         ?>
+    </div>
+    <br>
+    <div id="register">
+        <h3>Nie masz konta?</h3>
+        <form action="/register.php">
+            <input type="submit" value="Zarejestruj się">
+        </form>
     </div>
 </body>
