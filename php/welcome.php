@@ -71,7 +71,7 @@
                 echo $_SESSION["name"]
             ?>!</h1>
             <br>
-            <form action="/booking.php" class="center">
+            <form action="/booking_visit.php" class="center">
                 <input type="submit" value="Zapisz się na wizytę" class="button" style="margin-bottom: 40px">
             </form>
         </div>
@@ -105,7 +105,7 @@
                         return;
                     }
                     
-                    $table = "<table class=\"center\" style=\"margin-bottom: 30px;\"><tr><th>Usługa</th><th>Data</th><th>Czas</th><th>Lekarz</th><th>Cena</th></tr>\n";
+                    $table = "<table class=\"center\" style=\"margin-bottom: 30px; transform: scale(1.3);\"><tr><th>Usługa</th><th>Data</th><th>Czas</th><th>Lekarz</th><th>Cena</th></tr>\n";
                     while($row = $res->fetch_assoc()) {
                         $date = substr($row["AppointmentDate"], 0, 10);
 
@@ -131,6 +131,10 @@
                 }
 
             ?>
+            <br>
+            <form action="past_visits.php" class="center" style="transform: scale(2); margin-bottom: 30px">
+                <input type="submit" value="Poprzednie wizyty">
+            </form>
         </div>
     </div>
 </body>
