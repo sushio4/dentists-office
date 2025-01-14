@@ -58,6 +58,7 @@
 		}
 	</style>
 	<meta charset="utf-8">
+	<script src="/booking_visit.js"></script>
 </head>
 <body>
 	<header>
@@ -82,26 +83,6 @@
 			</div>
 			<form action="booking_time.php" method="GET">
 				<div id="timetable">
-					<?php
-						require_once "config.php";
-
-						// we don't need prepared statements because there is no risk of sql injection here
-						$db->real_query("SELECT * FROM Services");
-						$result = $db->use_result();
-
-						$table = "<table><tr><th></th><th>Nazwa usługi</th><th>Opis</th><th>Długość</th><th>Cena</th></tr>";
-						foreach($result as $row) {
-							$table .= "<tr><td><input type=\"radio\" name=\"service_id\" value=\"{$row["ServiceID"]}\"</td>";
-							$table .= "<td>{$row["ServiceName"]}</td><td>{$row["Description"]}</td>";
-
-							$dur_mins = 30 * $row["DurationHalfHours"];
-							$duration = date("H:i", strtotime("00:00 +{$dur_mins} minutes"));
-
-							$table .= "<td>{$duration}</td><td>{$row["Price"]}</td></tr>";
-						}
-						$table .= "</table>";
-						echo $table;
-					?>
 				</div>
 				<br>
 				<div id="submit_button" class="button" style="margin-bottom: 30px; margin-top: 30px">
