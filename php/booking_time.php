@@ -8,7 +8,7 @@
 		exit;
 	}
 
-	if(!isset($_GET["service_id"]) || !is_int($_GET["service_id"])) {
+	if(!isset($_GET["service_id"])) {
 		header("location: booking_visit.php");
 		exit;
 	}
