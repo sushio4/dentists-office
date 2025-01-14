@@ -41,6 +41,7 @@
         }
     </style>
     <meta charset="utf-8">
+    <script src="/past_visits.js"></script>
 </head>
 <body>
     <header>
@@ -61,51 +62,8 @@
     <div id="content">
         <h2 class="center">Twoje poprzednie wizyty</h2>
         <br>
-        <?php
-            require_once "config.php";
-
-            $sql = "SELECT ServiceName, DurationHalfHours, AppointmentDate, Staff.FirstName AS FirstName, 
-                           Staff.LastName AS LastName, Price 
-                    FROM Appointments 
-                    JOIN Services USING (ServiceID) 
-                    JOIN Staff USING (StaffID) 
-                    WHERE PatientId = ? AND AppointmentDate < CURDATE() 
-                    ORDER BY AppointmentDate DESC";
-
-            $stmt = $db->prepare($sql);
-            if (!$stmt) {
-                echo "<h3 class=\"center\">Wystąpił problem. Skontaktuj się z obsługą techniczną.</h3>";
-                return;
-            }
-
-            $user_id = $_SESSION["id"];
-            $stmt->bind_param("i", $user_id);
-
-            if ($stmt->execute()) {
-                $res = $stmt->get_result();
-
-                if ($res->num_rows == 0) {
-                    echo "<h3 class=\"center\">Brak poprzednich wizyt do wyświetlenia.</h3>";
-                } else {
-                    $table = "<table class=\"center\"><tr><th>Usługa</th><th>Data</th><th>Czas</th>
-                              <th>Lekarz</th><th>Cena</th></tr>";
-                    while ($row = $res->fetch_assoc()) {
-                        $date = substr($row["AppointmentDate"], 0, 10);
-                        $time_begin = date("H:i", strtotime(substr($row["AppointmentDate"], 11)));
-                        $duration_mins = $row["DurationHalfHours"] * 30;
-                        $time_end = date("H:i", strtotime($time_begin . "+{$duration_mins} minutes"));
-                        $time = "{$time_begin} - {$time_end}";
-
-                        $table .= "<tr><td>{$row["ServiceName"]}</td><td>{$date}</td><td>{$time}</td>
-                                   <td>{$row["FirstName"]} {$row["LastName"]}</td><td>{$row["Price"]}</td></tr>";
-                    }
-                    $table .= "</table>";
-                    echo $table;
-                }
-            } else {
-                echo "<h3 class=\"center\">Wystąpił problem. Skontaktuj się z obsługą techniczną.</h3>";
-            }
-        ?>
+        <div id="table">
+        </div>
         <br>
         <div class="center">
             <form action="main_page.php">
