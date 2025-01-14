@@ -6,7 +6,17 @@
 	if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
 		header("location: index.php");
 		exit;
-	}
+	}    
+	
+	if(!isset($_GET["service_id"])) {
+        echo "<h2>Nie wybrano usługi! Proszę wrócić</h2>";
+		exit;
+    }
+    if(!isset($_GET["time"])) {
+        echo "<h2>Nie wybrano terminu! Proszę wrócić</h2>";
+		exit;
+    }
+
 ?>
 <head>
 	<title>Rezerwacja wizyty</title>
@@ -58,6 +68,11 @@
 		}
 	</style>
 	<meta charset="utf-8">
+	<script>
+		const service_id = <?php echo $_GET["service_id"]; ?>;
+		const time = "<?php echo $_GET["time"]; ?>";
+	</script>
+	<script src="/booking_doctors.js"></script>
 </head>
 <body>
 	<header>
@@ -69,7 +84,7 @@
 		
 		<h1>Ząbex - Klinika Dentystyczna</h1>
 
-		<div id=logout>
+		<div id="logout">
 			<form action="logout.php">
 				<input type="submit" value="Wyloguj" class="button">
 			</form>
@@ -82,107 +97,6 @@
 			</div>
 			<form action="booked.php" method="POST">
 				<div id="timetable">
-					<?php
-						require_once "config.php";
-
-						if(!isset($_GET["service_id"])) {
-							echo "<h2>Nie wybrano usługi! Proszę wrócić</h2>";
-							return;
-						}
-						if(!isset($_GET["time"])) {
-							echo "<h2>Nie wybrano terminu! Proszę wrócić</h2>";
-							return;
-						}
-
-						$visit_date = date("Y-m-d", strtotime($_GET["time"]));
-						$visit_time= date("H:i", strtotime($_GET["time"]));
-						$service_id = $_GET["service_id"];
-
-						$db->real_query("SELECT StaffID, FirstName, LastName FROM Staff");
-						$rows = $db->use_result();
-						$staff = array();
-						while($row = $rows->fetch_assoc()) {
-							array_push($staff,  $row);
-						}
-					
-						$stmt = $db->prepare("SELECT DurationHalfHours FROM Services WHERE ServiceID = ?");
-						$stmt->bind_param("i", $service_id);
-						$stmt->execute();
-						$res = $stmt->get_result();
-						$visit_duration = $res->fetch_assoc()["DurationHalfHours"];
-
-						// we get all existing appointments after today to $res
-						$date_now = date("Y-m-d H:i");
-						$db->real_query("SELECT AppointmentDate, DurationHalfHours, StaffID FROM Appointments " .
-										"JOIN Services USING (ServiceID) WHERE AppointmentDate >= \"{$visit_date}\"");
-						$rows = $db->use_result();
-						$res = array();
-						while($row = $rows->fetch_assoc()) {
-							array_push($res, $row);
-						}
-
-						// construct the availability table for one day to check doctors avail.
-						$availability = array();
-							
-						$time_i = "08:00";
-						// 16 half hour periods between 8 and 16
-						for($j = 0; $j < 16; $j++) {
-							$availability[$time_i] = [];
-							foreach($staff as $s) {
-								// available, we'll change that later
-								$availability[$time_i][$s["StaffID"]] = true;
-							}
-							$time_i = date("H:i", strtotime($time_i . " +30 minutes"));
-						}
-
-						// update availability table
-						foreach($res as $row) {
-							$date = date("Y-m-d", strtotime($row["AppointmentDate"]));
-							if($date != $visit_date) continue;
-
-							$time = date("H:i", strtotime($row["AppointmentDate"]));
-							$sid = $row["StaffID"];
-							$dur = $row["DurationHalfHours"];
-
-							for($i = 0; $i < $dur; $i++) {
-								$availability[$time][$sid] = false;
-								// update time for visits longer than 30min
-								$time = date("H:i", strtotime($time . " +30 minutes"));
-							}
-						}
-						
-						$avail_doc = array();
-
-						foreach($staff as $s) {
-							$time_tmp = $visit_time;
-							// we get availability of a doctor by looping over all the time widows the visit would take
-							$avail = true;
-							for($j = 0; $j < $visit_duration; $j++) {
-								if(!$availability[$time_tmp][$s["StaffID"]]) {
-									$avail = false;
-									break;
-								}
-								$time_tmp = date("H:i", strtotime($time_tmp . " +30 minutes"));
-							}
-
-							if($avail) {
-								array_push($avail_doc, $s);
-							}
-						}
-
-						if(empty($avail_doc)) {
-							echo "Invalid GET arguments you dirty hacker!";
-							return;
-						}
-
-						$table = "<table>";
-						foreach($avail_doc as $doc) {
-							$table .= "<tr><td><input type=\"radio\" name=\"doctor\" value={$doc["StaffID"]}>{$doc["FirstName"]} {$doc["LastName"]}</td></tr>";
-						}
-						echo $table . "</table>";
-						echo "<input type=\"hidden\" name=\"service_id\" value=\"{$service_id}\">";
-						echo "<input type=\"hidden\" name=\"time\" value=\"{$_GET["time"]}\">";
-					?>
 				</div>
 				<br>
 				<div id="submit_button" class="button" style="margin-bottom: 30px; margin-top: 30px">
