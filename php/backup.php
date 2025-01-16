@@ -1,15 +1,15 @@
 <?php
 
 $DB_USER = 'root';
-$DB_PASSWORD = 'Ronaldo0709!'; // Password to MySQL
+$DB_PASSWORD = ''; // Password to MySQL
 $DB_NAME = 'dentist';
-$BACKUP_DIR = 'C:\Users\wikto\Desktop\backup'; // Path
+$BACKUP_DIR = ''; // Path
 
 $date = date('Y-m-d_H-i-s'); 
 
 $backup_file = $BACKUP_DIR . '\\' . $DB_NAME . '_' . $date . '.sql';
 
-$mysqldump_path = 'C:\\Program Files\\MySQL\\MySQL Server 8.0\\bin\\mysqldump.exe'; // Path to mysqldump.exe
+$mysqldump_path = ''; // Path to mysqldump.exe
 
 $command = "\"$mysqldump_path\" -u $DB_USER -p$DB_PASSWORD $DB_NAME > \"$backup_file\"";
 
