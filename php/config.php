@@ -37,7 +37,7 @@ function getDbConnection() {
             throw new Exception("Connection error: " . mysqli_connect_error());
         }
 
-        echo "Connection established!";
+        // echo "Connection established!";
         return $conn;
 
     } catch (Exception $e) {
